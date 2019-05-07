@@ -29,14 +29,57 @@ http.listen(port);
 console.log('express is now running on port ' + port)
 
 //End of static code
-
 let Schema= mongoose.Schema;
 
 let toDoSchema = new Schema({
   username: String,
   toDoBody: String,
+  description: String,
   title: String,
-  priority: Number,
-  dueDate: Number, //Use JavaScript Date Object
-  deleted: Boolean
+  priority: Number,//Change back to number when properly converted
+  dueDate: Number, //Use JavaScript Date Object. Change back  to number when properly converted
+  status: Boolean,
+  list: String
+});
+
+
+let toDoModel = new mongoose.model('notes', toDoSchema)
+
+app.post('/createNote',(request,response)=> {
+  console.log(request.body);
+//Save note to MongoDB
+  let newNote = new toDoModel({
+    username: request.body.username,
+    title: request.body.title,
+    description: request.body.description,
+    priority: request.body.priority,
+    dueDate: request.body.dueDate,
+    status: request.body.status,
+    list: null
+  });
+
+  newNote.save((error)=>{
+    if(error){
+      console.log('Something happened with mongoose',error);
+      //Respond to front end if failed
+      response.sendStatus(500);
+    } else {
+      console.log("Saved mongoose document succesfully");
+      //Respond to front end if succesful
+      response.send({text: 'Everything good baby'})
+    }
+  });
+});
+//A post handler for reading notes from the and sending them to the front end
+app.post('/readNotes',(request,response)=>{
+
+  toDoModel.find({}, (error, results)=>{
+    if (error){
+      console.log('Something happened with Mongoose.', error);
+      response.sendStatus(500);
+    } else {}
+      let dataToSend = {notes: results};
+      response.send(dataToSend);
+  })
+
 });
