@@ -71,15 +71,31 @@ app.post('/createNote',(request,response)=> {
   });
 });
 //A post handler for reading notes from the and sending them to the front end
-app.post('/readNotes',(request,response)=>{
-
-  toDoModel.find({}, (error, results)=>{
-    if (error){
+app.post('/readNotes',(request,response) => {
+  //Searches the MongoDB database and gets all the notes
+  toDoModel.find({}, (error, results) => {
+    if (error) {
+      // If there is an error, send to front end code 500
       console.log('Something happened with Mongoose.', error);
       response.sendStatus(500);
-    } else {}
+    } else {
+    //Otherwise send to front end what we got from database
       let dataToSend = {notes: results};
       response.send(dataToSend);
-  })
+    }
+  });
+});
 
+app.post('/deleteNote',(request, response) =>{
+  //Searches the mongodb by an id and deletes this document.
+  toDoModel.findByIdAndDelete(request.body._id,(error, results)=>{
+    if (error) {
+      //If there is an error, send to front end code 500
+      console.log('Something happened with mongoose', error);
+      response.sendStatus(500);
+    } else {
+      //Otherwise, send to front end the item we deleted that is stored in the variable results
+      response.send({deleted: results});
+    }
+  })
 });
