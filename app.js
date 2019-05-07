@@ -36,8 +36,8 @@ let toDoSchema = new Schema({
   toDoBody: String,
   description: String,
   title: String,
-  priority: Number,//Change back to number when properly converted
-  dueDate: Number, //Use JavaScript Date Object. Change back  to number when properly converted
+  priority: String,//Change back to number when properly converted
+  dueDate: String, //Use JavaScript Date Object. Change back  to number when properly converted
   status: Boolean,
   list: String
 });
